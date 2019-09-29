@@ -28,7 +28,7 @@ public class UserServiceJpaRepositoryImpl implements UserService {
 
     @Override
     public User findById(Long id) {
-        return userRepository.findById(id).orElse(null);
+        return userRepository.findById(id.intValue()).orElse(null);
     }
 
     @Override
