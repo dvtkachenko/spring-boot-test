@@ -1,11 +1,15 @@
 package io.spring.boot.web.rest;
 
 import io.spring.boot.entity.User;
+import io.spring.boot.service.UserServiceHibernateImpl;
 import io.spring.boot.service.api.UserService;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.DeleteMapping;
+import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -24,6 +28,8 @@ import java.util.Map;
 @RequestMapping("/api")
 public class MainRestController {
 
+    private static Logger logger = LoggerFactory.getLogger(MainRestController.class);
+
     @Autowired
     @Qualifier("userServiceJpaRepositoryImpl")
 //    @Qualifier("userServiceJpaImpl")
@@ -38,6 +44,9 @@ public class MainRestController {
     @GetMapping("/users")
     @ResponseBody
     public List<User> getAllUsers() {
+//        exception trigger
+//        int result = 1/0;
+//        logger.error("result of division " + result);
         return userService.findAll();
     }
 
@@ -85,4 +94,12 @@ public class MainRestController {
         final User deletedUser = userService.findById(id);
         userService.delete(deletedUser);
     }
+
+    @ExceptionHandler({Exception.class})
+    public String handleException() throws Exception {
+        logger.error("Exception was handled !!");
+//        throw new Exception("Something must have gone wrong on server !");
+        return "Something must have gone wrong on server side !";
+    }
+
 }
