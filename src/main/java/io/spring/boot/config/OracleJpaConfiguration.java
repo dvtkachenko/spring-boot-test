@@ -18,8 +18,8 @@ import javax.validation.constraints.NotNull;
 import java.sql.SQLException;
 import java.util.Properties;
 
-@Configuration
-@ConfigurationProperties("oracle")
+//@Configuration
+//@ConfigurationProperties("oracle")
 public class OracleJpaConfiguration {
 
     private static Logger logger = LoggerFactory.getLogger(OracleJpaConfiguration.class);
