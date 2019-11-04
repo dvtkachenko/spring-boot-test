@@ -1,6 +1,6 @@
 package io.spring.boot.config;
 
-import oracle.jdbc.pool.OracleDataSource;
+//import oracle.jdbc.pool.OracleDataSource;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.boot.context.properties.ConfigurationProperties;
@@ -45,39 +45,39 @@ public class OracleJpaConfiguration {
         this.url = url;
     }
 
-    @Bean
-    DataSource dataSource() {
-        try {
-            OracleDataSource dataSource = new OracleDataSource();
-            dataSource.setUser(username);
-            dataSource.setPassword(password);
-            dataSource.setURL(url);
-            dataSource.setImplicitCachingEnabled(true);
-            dataSource.setFastConnectionFailoverEnabled(true);
-            return dataSource;
-        } catch (SQLException e) {
-            logger.error("Oracle data source bean can not be created !", e);
-            return null;
-        }
-    }
-
-    @Bean
-    public PlatformTransactionManager  transactionManager(EntityManagerFactory emf) {
-        JpaTransactionManager transactionManager = new JpaTransactionManager();
-        transactionManager.setEntityManagerFactory(emf);
-        return transactionManager;
-    }
-
-    @Bean
-    public LocalContainerEntityManagerFactoryBean entityManagerFactory() {
-        LocalContainerEntityManagerFactoryBean em = new LocalContainerEntityManagerFactoryBean();
-        em.setDataSource(dataSource());
-        em.setPackagesToScan(new String[] { "io.spring.boot.entity"});
-        JpaVendorAdapter vendorAdapter = new HibernateJpaVendorAdapter();
-        em.setJpaVendorAdapter(vendorAdapter);
-        em.setJpaProperties(additionalProperties());
-        return em;
-    }
+//    @Bean
+//    DataSource dataSource() {
+//        try {
+//            OracleDataSource dataSource = new OracleDataSource();
+//            dataSource.setUser(username);
+//            dataSource.setPassword(password);
+//            dataSource.setURL(url);
+//            dataSource.setImplicitCachingEnabled(true);
+//            dataSource.setFastConnectionFailoverEnabled(true);
+//            return dataSource;
+//        } catch (SQLException e) {
+//            logger.error("Oracle data source bean can not be created !", e);
+//            return null;
+//        }
+//    }
+//
+//    @Bean
+//    public PlatformTransactionManager  transactionManager(EntityManagerFactory emf) {
+//        JpaTransactionManager transactionManager = new JpaTransactionManager();
+//        transactionManager.setEntityManagerFactory(emf);
+//        return transactionManager;
+//    }
+//
+//    @Bean
+//    public LocalContainerEntityManagerFactoryBean entityManagerFactory() {
+//        LocalContainerEntityManagerFactoryBean em = new LocalContainerEntityManagerFactoryBean();
+//        em.setDataSource(dataSource());
+//        em.setPackagesToScan(new String[] { "io.spring.boot.entity"});
+//        JpaVendorAdapter vendorAdapter = new HibernateJpaVendorAdapter();
+//        em.setJpaVendorAdapter(vendorAdapter);
+//        em.setJpaProperties(additionalProperties());
+//        return em;
+//    }
 
     private Properties additionalProperties() {
         Properties properties = new Properties();
