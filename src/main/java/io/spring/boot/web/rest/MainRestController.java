@@ -1,5 +1,6 @@
 package io.spring.boot.web.rest;
 
+import io.spring.boot.entity.GCPMessage;
 import io.spring.boot.entity.User;
 import io.spring.boot.service.UserServiceHibernateImpl;
 import io.spring.boot.service.api.UserService;
@@ -77,6 +78,12 @@ public class MainRestController {
     @GetMapping("/users/{id}")
     public User getUserById(@PathVariable("id") long id) {
         return userService.findById(id);
+    }
+
+    // test Google Cloud Platform Pub/Sub
+    @PostMapping("/message")
+    public void createMessage(@RequestBody GCPMessage message) {
+        System.out.println("Google Cloud Platform message received -> " + message.toString());
     }
 
     @PostMapping("/users")
