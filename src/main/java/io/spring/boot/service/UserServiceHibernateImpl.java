@@ -51,6 +51,13 @@ public class UserServiceHibernateImpl implements UserService {
     }
 
     @Override
+    public User create(User user) {
+        getCurrentSession().persist(user);
+        // TODO return
+        return user;
+    }
+
+    @Override
     public User update(User user) {
         return (User)getCurrentSession().merge(user);
     }

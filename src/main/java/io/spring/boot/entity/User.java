@@ -7,6 +7,9 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.NamedQuery;
 import javax.persistence.Table;
+import javax.validation.constraints.Past;
+import javax.validation.constraints.Size;
+import java.util.Date;
 import java.util.Objects;
 
 @Entity
@@ -21,8 +24,13 @@ public class User {
     @GeneratedValue(strategy = GenerationType.AUTO)
     private Integer id;
 
+    @Size(min=2, message="Name should have at least 2 characters")
     @Column(name = "USER_NAME", nullable = true, length = 255)
     private String name;
+
+//    @Column(name = "USER_BIRTH_DATE", nullable = true)
+    @Past
+    private Date birthDate;
 
     @Column(name = "USER_AGE", nullable = true)
     private Integer age;
@@ -47,6 +55,14 @@ public class User {
 
     public void setName(String name) {
         this.name = name;
+    }
+
+    public Date getBirthDate() {
+        return birthDate;
+    }
+
+    public void setBirthDate(Date birthDate) {
+        this.birthDate = birthDate;
     }
 
     public Integer getAge() {

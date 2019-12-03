@@ -1,6 +1,7 @@
 package io.spring.boot.service;
 
 import io.spring.boot.entity.User;
+import io.spring.boot.exception.UserNotFoundException;
 import io.spring.boot.repository.UserRepository;
 import io.spring.boot.service.api.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -28,12 +29,22 @@ public class UserServiceJpaRepositoryImpl implements UserService {
 
     @Override
     public User findById(Long id) {
-        return userRepository.findById(id.intValue()).orElse(null);
+//        return userRepository.findById(id.intValue()).orElse(null);
+        User user = userRepository.findById(id.intValue()).orElse(null);
+        if(user == null) {
+            throw new UserNotFoundException("id-" + id);
+        }
+        return user;
     }
 
     @Override
     public void save(User user) {
         userRepository.save(user);
+    }
+
+    @Override
+    public User create(User user) {
+        return userRepository.save(user);
     }
 
     @Override

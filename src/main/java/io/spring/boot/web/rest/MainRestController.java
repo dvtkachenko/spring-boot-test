@@ -1,13 +1,19 @@
 package io.spring.boot.web.rest;
 
+import static org.springframework.hateoas.mvc.ControllerLinkBuilder.*;
+import org.springframework.hateoas.mvc.ControllerLinkBuilder;
+
 import io.spring.boot.entity.GCPMessage;
 import io.spring.boot.entity.User;
+import io.spring.boot.exception.UserNotFoundException;
 import io.spring.boot.service.UserServiceHibernateImpl;
 import io.spring.boot.service.api.UserService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.hateoas.Resource;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.ExceptionHandler;
@@ -20,7 +26,10 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
+import javax.validation.Valid;
+import java.net.URI;
 import java.util.List;
 import java.util.Map;
 
@@ -77,7 +86,25 @@ public class MainRestController {
 
     @GetMapping("/users/{id}")
     public User getUserById(@PathVariable("id") long id) {
-        return userService.findById(id);
+        final User user = userService.findById(id);
+        if(user == null) {
+            throw new UserNotFoundException("id-" + id);
+        }
+        return user;
+    }
+
+    // HATEOAS example
+    @GetMapping("/hateoas/users/{id}")
+    public Resource<User> getHateoasUserById(@PathVariable("id") long id) {
+        final User user = userService.findById(id);
+        if(user == null) {
+            throw new UserNotFoundException("id-" + id);
+        }
+
+        Resource<User> resource = new Resource(user);
+        ControllerLinkBuilder linkTo = linkTo(methodOn(this.getClass()).getAllUsers());
+        resource.add(linkTo.withRel("all-users"));
+        return resource;
     }
 
     // test Google Cloud Platform Pub/Sub
@@ -87,8 +114,14 @@ public class MainRestController {
     }
 
     @PostMapping("/users")
-    public void createUser(@RequestBody User user) {
-        userService.save(user);
+    public ResponseEntity<Object> createUser(@Valid @RequestBody User user) {
+//        userService.save(user);
+        User createdUser = userService.create(user);
+        URI location = ServletUriComponentsBuilder
+                .fromCurrentRequest()
+                .path("/{id}")
+                .buildAndExpand(createdUser.getId()).toUri();
+        return ResponseEntity.created(location).build();
     }
 
     @PutMapping("/users")
@@ -98,11 +131,17 @@ public class MainRestController {
 
     @DeleteMapping("/users/{id}")
     public void deleteUser(@PathVariable("id") long id) {
+//        final User deletedUser = userService.findById(id);
+
         final User deletedUser = userService.findById(id);
+        if(deletedUser == null) {
+            throw new UserNotFoundException("id-" + id);
+        }
         userService.delete(deletedUser);
     }
 
-    @ExceptionHandler({Exception.class})
+    //    @ExceptionHandler annotated method is only active for that particular Controller, not globally for the entire application.
+//    @ExceptionHandler({Exception.class})
     public String handleException() throws Exception {
         logger.error("Exception was handled !!");
 //        throw new Exception("Something must have gone wrong on server !");

@@ -34,6 +34,13 @@ public class UserServiceJpaImpl implements UserService {
     }
 
     @Override
+    public User create(User user) {
+        em.persist(user);
+        // TODO return
+        return user;
+    }
+
+    @Override
     public User update(User user) {
         if (user.getId() != null) {
             return em.merge(user);
