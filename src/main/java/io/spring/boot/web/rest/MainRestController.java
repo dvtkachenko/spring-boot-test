@@ -1,6 +1,11 @@
 package io.spring.boot.web.rest;
 
 import static org.springframework.hateoas.mvc.ControllerLinkBuilder.*;
+
+import io.spring.boot.entity.Post;
+import io.spring.boot.service.api.PostService;
+import org.springframework.context.MessageSource;
+import org.springframework.context.i18n.LocaleContextHolder;
 import org.springframework.hateoas.mvc.ControllerLinkBuilder;
 
 import io.spring.boot.entity.GCPMessage;
@@ -14,23 +19,13 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.hateoas.Resource;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.CrossOrigin;
-import org.springframework.web.bind.annotation.DeleteMapping;
-import org.springframework.web.bind.annotation.ExceptionHandler;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.PutMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.ResponseBody;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
 import javax.validation.Valid;
 import java.net.URI;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 
 @RestController
@@ -41,10 +36,16 @@ public class MainRestController {
     private static Logger logger = LoggerFactory.getLogger(MainRestController.class);
 
     @Autowired
+    private MessageSource messageSource;
+
+    @Autowired
     @Qualifier("userServiceJpaRepositoryImpl")
 //    @Qualifier("userServiceJpaImpl")
 //    @Qualifier("userServiceHibernateImpl")
     private UserService userService;
+
+    @Autowired
+    private PostService postService;
 
     @GetMapping("/")
     public String index() {
@@ -140,6 +141,25 @@ public class MainRestController {
         userService.delete(deletedUser);
     }
 
+    @PostMapping("/users/{id}/posts")
+    public ResponseEntity<Object> createPost(@PathVariable("id") long userId, @RequestBody Post post) {
+        Post createdPost = postService.create(userId, post);
+        URI location = ServletUriComponentsBuilder
+                .fromCurrentRequest()
+                .path("/{id}")
+                .buildAndExpand(createdPost.getId()).toUri();
+        return ResponseEntity.created(location).build();
+    }
+
+//    @GetMapping("/greeting-i18n")
+//    public String greetingInternationalized(@RequestHeader(name="Accept-Language", required = false) Locale locale) {
+//        return messageSource.getMessage("good.morning.message", null, locale);
+//    }
+
+    @GetMapping("/greeting-i18n")
+    public String greetingInternationalized() {
+        return messageSource.getMessage("good.morning.message", null, LocaleContextHolder.getLocale());
+    }
     //    @ExceptionHandler annotated method is only active for that particular Controller, not globally for the entire application.
 //    @ExceptionHandler({Exception.class})
     public String handleException() throws Exception {

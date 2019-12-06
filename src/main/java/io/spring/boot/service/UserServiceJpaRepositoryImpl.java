@@ -1,5 +1,6 @@
 package io.spring.boot.service;
 
+import io.spring.boot.entity.Post;
 import io.spring.boot.entity.User;
 import io.spring.boot.exception.UserNotFoundException;
 import io.spring.boot.repository.UserRepository;
@@ -73,5 +74,15 @@ public class UserServiceJpaRepositoryImpl implements UserService {
     @Override
     public List<User> findByComment(String comment) {
         return userRepository.findByComment(comment);
+    }
+
+    public List<Post> findAllUsersPost(Long id) {
+        Optional<User> userOptional = userRepository.findById(id.intValue());
+
+        if(!userOptional.isPresent()) {
+            throw new UserNotFoundException("id-" + id);
+        }
+
+        return userOptional.get().getPosts();
     }
 }
