@@ -3,6 +3,7 @@ package io.spring.boot.config;
 //import oracle.jdbc.pool.OracleDataSource;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -20,6 +21,9 @@ import java.util.Properties;
 public class OracleHibernateConfiguration {
 
     private static Logger logger = LoggerFactory.getLogger(OracleHibernateConfiguration.class);
+
+//    @Autowired
+//    public DataSource dataSource;
 
     @NotNull
     private String username;

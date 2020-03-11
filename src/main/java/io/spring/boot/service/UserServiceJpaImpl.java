@@ -2,12 +2,14 @@ package io.spring.boot.service;
 
 import io.spring.boot.entity.User;
 import io.spring.boot.service.api.UserService;
+import org.hibernate.query.NativeQuery;
 import org.springframework.stereotype.Repository;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
+import javax.persistence.Query;
 import java.util.List;
 
 @Service
@@ -55,11 +57,19 @@ public class UserServiceJpaImpl implements UserService {
 
     @Override
     public List<User> findByName(String name) {
-        return null;
+//        for SQL injection example
+        final Query sqlQuery = em.createNativeQuery("select ut.* from user_table ut where ut.user_name like " + name, User.class);
+        return sqlQuery.getResultList();
     }
 
     @Override
     public List<User> findByAge(Long age) {
         return null;
+    }
+
+    public List<User> findByAge(String age) {
+//        for SQL injection example
+        final Query sqlQuery = em.createNativeQuery("select ut.* from user_table ut where ut.user_age = " + age, User.class);
+        return sqlQuery.getResultList();
     }
 }

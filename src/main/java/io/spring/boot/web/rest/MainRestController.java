@@ -3,6 +3,7 @@ package io.spring.boot.web.rest;
 import static org.springframework.hateoas.mvc.ControllerLinkBuilder.*;
 
 import io.spring.boot.entity.Post;
+import io.spring.boot.service.UserServiceJpaImpl;
 import io.spring.boot.service.api.PostService;
 import org.springframework.context.MessageSource;
 import org.springframework.context.i18n.LocaleContextHolder;
@@ -39,10 +40,11 @@ public class MainRestController {
     private MessageSource messageSource;
 
     @Autowired
-    @Qualifier("userServiceJpaRepositoryImpl")
-//    @Qualifier("userServiceJpaImpl")
+//    @Qualifier("userServiceJpaRepositoryImpl")
+    @Qualifier("userServiceJpaImpl")
 //    @Qualifier("userServiceHibernateImpl")
-    private UserService userService;
+//    private UserService userService;
+    private UserServiceJpaImpl userService;
 
     @Autowired
     private PostService postService;
@@ -67,7 +69,8 @@ public class MainRestController {
             return userService.findByName(allParams.get("name"));
         }
         if(allParams.get("age") != null) {
-            return userService.findByAge(Long.valueOf(allParams.get("age")));
+//            return userService.findByAge(Long.valueOf(allParams.get("age")));
+            return userService.findByAge(allParams.get("age"));
         }
         if(allParams.get("comment") != null) {
             return userService.findByComment(allParams.get("comment"));

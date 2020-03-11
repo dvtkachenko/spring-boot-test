@@ -13,5 +13,6 @@ public interface UserService {
     void delete(User user);
     List<User> findByName(String name);
     List<User> findByAge(Long age);
+//    List<User> findByAge(String age);
     default List<User> findByComment(String comment) { return null; };
 }
